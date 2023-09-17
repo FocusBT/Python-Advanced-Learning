@@ -1,6 +1,6 @@
 # from typing import Union
 from fastapi import FastAPI, Query, Path, Body
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional
 from enum import Enum
 app = FastAPI()
@@ -93,12 +93,43 @@ def index():
 
 # Part 8 -> Body - Field
 
+# class Item(BaseModel):
+#     name: str
+#     des: str | None = Field(None, max_length=300)
+#     price: float = Field(..., gt=0)
+#     tax: float | None = None
+# @app.put("/items/{item_id}")
+# async def update_items(item_id: int, item: Item = Body(..., embed=True)):
+#     results = {"item_id": item_id, "item": item}
+#     return results
+
+
+# Part 9 -> Body - Nested Modules
+
+# class Image(BaseModel):
+#     url: HttpUrl
+#     name: str
+
+# class Item(BaseModel):
+#     name: str
+#     tags: set[str] = []
+#     image: Image | None = None
+# class Offer(BaseModel):
+#     offer_id: int = Field(..., gt=-1,lt=100)
+#     items: list[Item]
+# # now if you pass list of str but due to useage of set it will return only unique elements
+# @app.post("/items")
+# async def update_items(offer: Offer = Body(..., embed=True)):
+#     return offer
+
+
+# Part 10 -> Declare Request Example Data
 class Item(BaseModel):
-    name: str
-    des: str | None = Field(None, max_length=300)
-    price: float = Field(..., gt=0)
-    tax: float | None = None
-@app.put("/items/{item_id}")
-async def update_items(item_id: int, item: Item = Body(..., embed=True)):
+    name: str = Field(..., example="wase")
+    id: int = Field(..., example=12)
+    des: str = Field(..., max_length=300, example="desc")
+
+@app.post("/items/{item_id}")
+async def getItems(item_id: int, item: Item):
     results = {"item_id": item_id, "item": item}
     return results
